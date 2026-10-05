@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Flow Track - Weather Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<nav>
+<a href="index.html" class="brand">🚦 Flow Track</a>
+<div class="nav-links">
+<a href="index.html">Dashboard</a>
+<a href="weather.html" class="active">Weather</a>
+<a href="analytics.html">Analytics</a>
+<a href="predictive.html">Prediction</a>
+</div>
+</nav>
+<div class="container mt-4" style="max-width:1000px;">
+
+<div class="card shadow-sm text-center p-4 mb-4">
+<h2>🌦️ Weather & Environmental Conditions</h2>
+<p class="text-muted mb-3">Check weather conditions for any city</p>
+
+<div class="d-flex justify-content-center gap-2">
+<input type="text" id="cityInput" class="form-control" style="max-width:400px;" placeholder="Enter city e.g. Mumbai">
+<button class="btn btn-primary" onclick="checkWeather()">Check Weather</button>
+</div>
+
+<p id="cityName" class="text-primary fw-bold mt-3 mb-0"></p>
+</div>
+
+<div id="weatherSection" style="display:none;">
+
+<div class="row g-3 mb-4">
+
+<div class="col-md-6">
+<div class="card shadow-sm h-100 border-start border-primary border-3">
+<div class="card-body">
+<h6 class="text-muted small fw-bold mb-3">🌡 WEATHER INFORMATION</h6>
+<p class="mb-1"><strong>Temperature :</strong> <span id="temperature">-- °C</span></p>
+<p class="mb-1"><strong>Weather :</strong> <span id="weather">--</span></p>
+<p class="mb-1"><strong>Humidity :</strong> <span id="humidity">-- %</span></p>
+<p class="mb-0"><strong>Wind Speed :</strong> <span id="wind">-- m/s</span></p>
+</div>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="card shadow-sm h-100 border-start border-success border-3">
+<div class="card-body">
+<h6 class="text-muted small fw-bold mb-3">🌍 AIR QUALITY & VISIBILITY</h6>
+<p class="mb-1"><strong>AQI Index :</strong> <span id="aqi">--</span></p>
+<p class="mb-1"><strong>Visibility :</strong> <span id="visibility">-- km</span></p>
+<p class="mb-0"><strong>Air Status :</strong> <span id="airStatus">--</span></p>
+</div>
+</div>
+</div>
+
+<div class="col-12">
+<div class="card shadow-sm border-start border-warning border-3">
+<div class="card-header bg-transparent border-0 pt-3 pb-0 fw-bold">🚗 Vehicle Flow Assessment</div>
+<div class="card-body">
+<h5 id="flowCondition" class="fw-bold text-dark">--</h5>
+<p id="recommendation" class="text-muted mb-0">--</p>
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+    <p>Flow Track • Weather & Environmental Monitoring</p>
+</footer>
+
+<script>
+
+const apiKey="dc123c06ed11047b57f599e1a8831420";
+
+async function checkWeather(){
+    const city=document.getElementById("cityInput").value.trim();
+
+    if(!city){
+        alert("Please enter a city or location.");
+        return;
+    }
+
+    try{
+        const geoResponse=await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)},IN&limit=5&appid=${apiKey}`);
+        const locations=await geoResponse.json();
+
+        if(!locations.length){
+            alert("Location not found. Try another location.");
+            return;
+        }
+
+        let location=locations[0];
+
+        const weatherResponse=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${apiKey}&units=metric`);
+        const data=await weatherResponse.json();
+
+        if(data.cod!=200){
+            alert("Weather data not found for this location.");
+            return;
+        }
+
+        document.getElementById("weatherSection").style.display="block";
+
+        document.getElementById("cityName").innerText=`Weather for ${location.name}, ${location.state||"India"}`;
+
+        document.getElementById("temperature").innerText=`${data.main.temp} °C`;
+        document.getElementById("weather").innerText=data.weather[0].main;
+        document.getElementById("humidity").innerText=`${data.main.humidity} %`;
+        document.getElementById("wind").innerText=`${data.wind.speed} m/s`;
+        document.getElementById("visibility").innerText=`${(data.visibility/1000).toFixed(1)} km`;
+
+        document.getElementById("aqi").innerText="Moderate";
+        document.getElementById("airStatus").innerText="Moderate";
+
+        const conditionMap={
+            "Clear":{
+                flow:"🟢 Excellent Vehicle Flow",
+                rec:"Roads are clear. Safe for travel."
+            },
+            "Clouds":{
+                flow:"🟡 Moderate Vehicle Flow",
+                rec:"Normal traffic expected."
+            },
+            "Rain":{
+                flow:"🟠 Slow Vehicle Flow",
+                rec:"Roads may be slippery. Drive slowly."
+            },
+            "Drizzle":{
+                flow:"🟠 Slow Vehicle Flow",
+                rec:"Roads may be slippery. Drive slowly."
+            },
+            "Thunderstorm":{
+                flow:"🔴 Poor Vehicle Flow",
+                rec:"Avoid unnecessary travel."
+            },
+            "Mist":{
+                flow:"🔴 Low Visibility",
+                rec:"Use headlights and maintain distance."
+            },
+            "Fog":{
+                flow:"🔴 Low Visibility",
+                rec:"Use headlights and maintain distance."
+            },
+            "Haze":{
+                flow:"🔴 Low Visibility",
+                rec:"Use headlights and maintain distance."
+            }
+        };
+
+        const state=conditionMap[data.weather[0].main]||{
+            flow:"🟡 Normal Vehicle Flow",
+            rec:"Drive carefully."
+        };
+
+        document.getElementById("flowCondition").innerText=state.flow;
+        document.getElementById("recommendation").innerText=state.rec;
+
+    }catch(error){
+        console.error(error);
+        alert("Unable to fetch weather data.");
+    }
+}
+</script>
+</body>
+</html>

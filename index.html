@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Flow Track - Journey Planner</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav>
+
+        <a href="index.html" class="brand">
+            🚦 Flow Track
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html" class="active">Dashboard</a>
+            <a href="weather.html">Weather</a>
+            <a href="analytics.html">Analytics</a>
+            <a href="predictive.html">Prediction</a>
+        </div>
+
+    </nav>
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+
+        <h1>🚦 Traffic Congestion Analyzer</h1>
+
+        <p>
+            Plan Your Journey with Smart Traffic Analysis
+        </p>
+
+    </header>
+
+
+    <!-- ================= JOURNEY PLANNER ================= -->
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>Journey Planner</h2>
+
+
+            <!-- START LOCATION -->
+
+            <label for="startLocation">
+                📍 Start Location
+            </label>
+
+            <input
+                type="text"
+                id="startLocation"
+                placeholder="Example: Dadar"
+                autocomplete="off"
+            >
+
+
+            <!-- DESTINATION -->
+
+            <label for="destination">
+                🏁 Destination
+            </label>
+
+            <input
+                type="text"
+                id="destination"
+                placeholder="Example: Bandra"
+                autocomplete="off"
+            >
+
+
+            <!-- VEHICLE -->
+
+            <label for="vehicle">
+                🚗 Select Vehicle
+            </label>
+
+            <select id="vehicle">
+
+                <option value="car">
+                    Car
+                </option>
+
+                <option value="bike">
+                    Bike
+                </option>
+
+                <option value="bus">
+                    Bus
+                </option>
+
+                <option value="cycle">
+                   Cycle
+                </option>
+
+            </select>
+
+
+            <!-- JOURNEY PRIORITY -->
+
+            <label for="priority">
+                🎯 Journey Priority
+            </label>
+
+            <select id="priority">
+
+                <option value="fastest">
+                    Fastest Route
+                </option>
+
+                <option value="shortest">
+                    Shortest Distance
+                </option>
+
+            </select>
+
+
+            <!-- DEPARTURE TIME -->
+
+            <label for="departureTime">
+                🕐 Departure Time
+            </label>
+
+            <input
+                type="time"
+                id="departureTime"
+            >
+
+
+            <!-- ANALYZE BUTTON -->
+
+            <button onclick="analyzeTraffic()">
+                🚦 Analyze Traffic
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+  <footer>
+    <p>Flow Track • Smart Traffic & Route Analysis</p>
+</footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        function analyzeTraffic() {
+
+            // Get user inputs
+            const startLocation =
+                document.getElementById("startLocation").value.trim();
+
+            const destination =
+                document.getElementById("destination").value.trim();
+
+            const vehicle =
+                document.getElementById("vehicle").value;
+
+            const priority =
+                document.getElementById("priority").value;
+
+            const departureTime =
+                document.getElementById("departureTime").value;
+
+
+            // Validate Start Location
+            if (startLocation === "") {
+
+                alert("Please enter your start location.");
+
+                return;
+            }
+
+
+            // Validate Destination
+            if (destination === "") {
+
+                alert("Please enter your destination.");
+
+                return;
+            }
+
+
+            // Validate same locations
+            if (
+                startLocation.toLowerCase() ===
+                destination.toLowerCase()
+            ) {
+
+                alert(
+                    "Start location and destination cannot be the same."
+                );
+
+                return;
+            }
+
+
+            // Validate departure time
+            if (departureTime === "") {
+
+                alert("Please select your departure time.");
+
+                return;
+            }
+
+
+            // Save journey information
+            localStorage.setItem(
+                "startLocation",
+                startLocation
+            );
+
+            localStorage.setItem(
+                "destination",
+                destination
+            );
+
+            localStorage.setItem(
+                "vehicle",
+                vehicle
+            );
+
+            localStorage.setItem(
+                "priority",
+                priority
+            );
+
+            localStorage.setItem(
+                "departureTime",
+                departureTime
+            );
+
+
+            // Open results page
+            window.location.href = "results.html";
+        }
+
+    </script>
+
+</body>
+
+</html>

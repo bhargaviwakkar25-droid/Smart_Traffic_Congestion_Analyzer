@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Flow Track - Predictive Forecast</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light pb-5">
+
+<nav>
+<a href="index.html" class="brand">🚦 Flow Track</a>
+<div class="nav-links">
+<a href="index.html">Dashboard</a>
+<a href="weather.html">Weather</a>
+<a href="analytics.html">Analytics</a>
+<a href="predictive.html" class="active">Prediction</a>
+</div>
+</nav>
+
+<div class="container mt-4" style="max-width:1000px">
+
+<div class="card shadow-sm text-center p-4 mb-4">
+<h2 class="fw-bold text-dark">🔮 Predictive Traffic Forecast</h2>
+<p class="text-dark mb-0">Forecast future traffic conditions using day and departure-time patterns.</p>
+</div>
+
+<div class="card shadow-sm mb-4">
+<div class="card-body">
+<div class="row g-3">
+
+<div class="col-md-4">
+<label class="form-label small fw-bold text-dark">📆 Select Day</label>
+<select id="forecastDay" class="form-select" onchange="runForecast()">
+<option value="weekday">Monday - Friday</option>
+<option value="saturday">Saturday</option>
+<option value="sunday">Sunday</option>
+</select>
+</div>
+
+<div class="col-md-4">
+<label class="form-label small fw-bold text-dark">🕒 Departure Window</label>
+<select id="forecastTime" class="form-select" onchange="runForecast()">
+<option value="morning">Morning Peak (7:00 AM - 10:00 AM)</option>
+<option value="midday" selected>Midday (11:00 AM - 4:00 PM)</option>
+<option value="evening">Evening Peak (5:00 PM - 8:00 PM)</option>
+<option value="night">Night (9:00 PM - 6:00 AM)</option>
+</select>
+</div>
+
+<div class="col-md-4">
+<div class="p-2 border rounded bg-light text-center h-100 d-flex flex-column justify-content-center">
+<span class="small text-dark mb-1">Predicted Traffic Level</span>
+<span id="statusBadge" class="badge bg-warning text-dark px-3 py-2 fs-6">🟡 Moderate</span>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="row g-3 mb-4">
+
+<div class="col-md-4">
+<div class="card shadow-sm text-center h-100 border-start border-primary border-3">
+<div class="card-body">
+<div class="text-dark">🚦 Congestion Probability</div>
+<h2 id="congestion" class="fw-bold text-primary mt-2">45%</h2>
+<small class="text-dark">Expected traffic load</small>
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card shadow-sm text-center h-100 border-start border-warning border-3">
+<div class="card-body">
+<div class="text-dark">⏱️ Expected Delay</div>
+<h2 id="delay" class="fw-bold text-warning mt-2">+10 min</h2>
+<small class="text-dark">Compared with normal flow</small>
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card shadow-sm text-center h-100 border-start border-success border-3">
+<div class="card-body">
+<div class="text-dark">📈 Traffic Pattern</div>
+<h2 id="pattern" class="fw-bold text-success mt-2">Normal</h2>
+<small class="text-dark">Predicted road condition</small>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="row g-3">
+
+<div class="col-md-7">
+
+<h5 class="mb-3 fw-bold text-dark">📊 Traffic Pattern Analysis</h5>
+
+<div class="card shadow-sm mb-3">
+<div class="card-body">
+<h6 class="fw-bold text-dark">Expected Road Conditions</h6>
+<p id="conditionText" class="text-dark mb-0">
+Moderate traffic is expected during this period.
+</p>
+</div>
+</div>
+
+<div class="card shadow-sm">
+<div class="card-body">
+<h6 class="fw-bold text-dark">📅 Forecast Summary</h6>
+
+<div class="d-flex justify-content-between border-bottom py-2">
+<span class="text-dark">Selected Day</span>
+<strong id="summaryDay" class="text-dark">Monday - Friday</strong>
+</div>
+
+<div class="d-flex justify-content-between border-bottom py-2">
+<span class="text-dark">Departure Window</span>
+<strong id="summaryTime" class="text-dark">Midday</strong>
+</div>
+
+<div class="d-flex justify-content-between py-2">
+<span class="text-dark">Traffic Trend</span>
+<strong id="summaryTrend" class="text-dark">Moderate</strong>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<div class="col-md-5">
+
+<h5 class="mb-3 fw-bold text-dark">💡 Smart Recommendation</h5>
+
+<div class="card shadow-sm border-start border-primary border-3 h-100">
+<div class="card-body d-flex flex-column justify-content-between">
+
+<div id="adviceContent">
+<h6 class="text-warning fw-bold">Plan with Extra Time</h6>
+<p class="small text-dark">
+Moderate traffic is expected. Allow additional travel time and avoid unnecessary stops.
+</p>
+</div>
+
+<div class="alert alert-info small mb-0 p-2">
+ℹ️ <strong>Planning Tip:</strong> Travelling outside peak periods can reduce expected delays.
+</div>
+
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+<p><span class="footer-brand">Flow Track</span> • AI-Based Traffic Prediction</p>
+</footer>
+
+<script>
+function runForecast(){
+
+const day=document.getElementById("forecastDay").value;
+const time=document.getElementById("forecastTime").value;
+
+const status=document.getElementById("statusBadge");
+const congestion=document.getElementById("congestion");
+const delay=document.getElementById("delay");
+const pattern=document.getElementById("pattern");
+const condition=document.getElementById("conditionText");
+const advice=document.getElementById("adviceContent");
+const summaryDay=document.getElementById("summaryDay");
+const summaryTime=document.getElementById("summaryTime");
+const summaryTrend=document.getElementById("summaryTrend");
+
+let level,prob,delayValue,trend,conditionText,adviceTitle,adviceText;
+let dayText=document.getElementById("forecastDay").options[document.getElementById("forecastDay").selectedIndex].text;
+let timeText=document.getElementById("forecastTime").options[document.getElementById("forecastTime").selectedIndex].text;
+
+if(day==="weekday" && time==="morning"){
+level="🔴 High";prob="78%";delayValue="+25 min";trend="Heavy";
+conditionText="High traffic is expected during the morning peak because of increased commuter movement.";
+adviceTitle="Avoid Morning Peak";
+adviceText="If possible, travel before 7:00 AM or after 10:00 AM to reduce expected delay.";
+}
+
+else if(day==="weekday" && time==="evening"){
+level="🔴 High";prob="85%";delayValue="+30 min";trend="Heavy";
+conditionText="Heavy traffic is expected during the evening peak due to return commuting and higher road demand.";
+adviceTitle="Avoid Evening Peak";
+adviceText="Consider travelling before 5:00 PM or after 8:00 PM when traffic demand is expected to decrease.";
+}
+
+else if(day==="weekday" && time==="midday"){
+level="🟡 Moderate";prob="45%";delayValue="+10 min";trend="Moderate";
+conditionText="Moderate traffic is expected during the midday period with occasional local slowdowns.";
+adviceTitle="Normal Travel Recommended";
+adviceText="Traffic should remain manageable. Allow a small amount of extra travel time.";
+}
+
+else if(day==="weekday" && time==="night"){
+level="🟢 Low";prob="20%";delayValue="+4 min";trend="Light";
+conditionText="Lower traffic demand is expected during the night period.";
+adviceTitle="Good Travel Window";
+adviceText="This is generally a favourable time to travel with lower expected congestion.";
+}
+
+else if((day==="saturday" || day==="sunday") && time==="morning"){
+level="🟢 Low";prob="25%";delayValue="+5 min";trend="Light";
+conditionText="Weekend morning traffic is generally expected to remain light.";
+adviceTitle="Good Travel Window";
+adviceText="Morning travel is expected to have relatively low traffic demand.";
+}
+
+else if((day==="saturday" || day==="sunday") && time==="midday"){
+level="🟡 Moderate";prob="50%";delayValue="+12 min";trend="Moderate";
+conditionText="Moderate traffic may occur around shopping, entertainment and busy local areas.";
+adviceTitle="Allow Extra Time";
+adviceText="Keep some additional travel time, especially around commercial areas.";
+}
+
+else if((day==="saturday" || day==="sunday") && time==="evening"){
+level="🟠 High";prob="65%";delayValue="+18 min";trend="Increasing";
+conditionText="Traffic demand may increase during weekend evening activity and local travel.";
+adviceTitle="Plan Your Departure";
+adviceText="Leaving slightly earlier can help avoid increasing evening traffic.";
+}
+
+else{
+level="🟢 Low";prob="18%";delayValue="+3 min";trend="Light";
+conditionText="Low traffic demand is expected during the late-night period.";
+adviceTitle="Optimal Travel Conditions";
+adviceText="Traffic is expected to remain light. Normal travel planning should be sufficient.";
+}
+
+status.className="badge px-3 py-2 fs-6";
+
+if(level.includes("High")) status.classList.add("bg-danger");
+else if(level.includes("Moderate")) status.classList.add("bg-warning","text-dark");
+else status.classList.add("bg-success");
+
+status.innerText=level;
+congestion.innerText=prob;
+delay.innerText=delayValue;
+pattern.innerText=trend;
+condition.innerText=conditionText;
+
+summaryDay.innerText=dayText;
+summaryTime.innerText=timeText;
+summaryTrend.innerText=trend;
+
+advice.innerHTML="<h6 class='fw-bold "+(level.includes("High")?"text-danger":level.includes("Moderate")?"text-warning-emphasis":"text-success")+"'>"+adviceTitle+"</h6><p class='small text-dark'>"+adviceText+"</p>";
+
+}
+
+window.onload=runForecast;
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
